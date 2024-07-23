@@ -26,3 +26,7 @@ def get_users():
 @app.post("/users/create/")
 def create_users(id: int = Body(...), name: str = Body(...), price: int = Body(...)):
     return {"id": id, "name": name, "price": price}
+
+
+
+
