@@ -1,8 +1,8 @@
 from typing import Union
 
-from database import add_fruits, read_fruits
 from fastapi import Body, FastAPI
-from models import User
+
+from database import add_fruits, read_fruits
 
 app = FastAPI()
 
@@ -23,10 +23,10 @@ def get_users():
     return read_fruits()
 
 
-@app.post("/users/create/")
+@app.post("/fruits")
 def create_users(id: int = Body(...), name: str = Body(...), price: int = Body(...)):
-    return {"id": id, "name": name, "price": price}
-
+    fruits_obj = add_fruits(id, name, price)
+    return {"id": fruits_obj.id, "name": fruits_obj.name, "price": fruits_obj.price}
 
 
 
