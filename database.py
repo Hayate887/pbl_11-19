@@ -27,14 +27,10 @@ def add_fruits(id: int, name: str, price: int):
 
 
 def setup(user: models.UserSetup):
-    db_user_id = session.query(models.Setup).first()
-
     if user.username == "":
-        print(db_user_id)
         raise HTTPException(status_code=401, detail="ユーザー名を入力してください")
 
-    hashed_username = pwd_context.hash(user.username)
-    user_obj = models.Setup(username=hashed_username)
+    user_obj = models.Setup(username=user.username)
     session.add(user_obj)
     session.commit()
     session.refresh(user_obj)
@@ -42,20 +38,24 @@ def setup(user: models.UserSetup):
 
 
 def add_users(user: models.UserCreate):
-    db_user_name = session.query(models.Setup).first()
-    db_user_name2 = session.query(models.Users).first()
+    set_user_name = (
+        session.query(models.Setup)
+        .filter(user.username == models.Setup.username)
+        .first()
+    )
+    db_user_name = session.query(models.Users).first()
 
     if user.username == "" or user.password == "":
         raise HTTPException(
             status_code=401, detail="ユーザー名またはパスワードを入力してください"
         )
 
-    if not pwd_context.verify(user.username, db_user_name.username):
+    if set_user_name is None:
         raise HTTPException(status_code=401, detail="ユーザー名に誤りがあります")
 
-    if db_user_name2 is None:
+    if db_user_name is None:
         pass
-    elif pwd_context.verify(user.username, db_user_name2.username):
+    elif pwd_context.verify(user.username, db_user_name.username):
         raise HTTPException(status_code=401, detail="ユーザー名はすでに存在します")
 
     hash_username = pwd_context.hash(user.username)
