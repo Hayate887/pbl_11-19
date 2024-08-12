@@ -1,10 +1,30 @@
 from typing import Union
 
 from fastapi import Body, FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
-from database import add_fruits, read_fruits
+import models
+from database import (
+    add_fruits,
+    add_users,
+    read_fruits,
+    read_users,
+    setup,
+)
 
 app = FastAPI()
+
+origins = [
+    "http://localhost:3000",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 
 @app.get("/")
@@ -29,4 +49,19 @@ def create_users(id: int = Body(...), name: str = Body(...), price: int = Body(.
     return {"id": fruits_obj.id, "name": fruits_obj.name, "price": fruits_obj.price}
 
 
+@app.post("/setting")
+def set_up(user: models.UserSetup):
+    set_up_obj = setup(user)
+    return set_up_obj
 
+
+@app.post("/creates")
+def sign_up(user: models.UserCreate):
+    sign_up_obj = add_users(user)
+    return sign_up_obj
+
+
+@app.post("/login")
+def sign_in(user: models.UserCreate):
+    sign_in_obj = read_users(user)
+    return sign_in_obj
