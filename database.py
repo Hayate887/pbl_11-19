@@ -55,29 +55,36 @@ def add_users(user: models.UserCreate):
 
     if db_user_name is None:
         pass
-    elif pwd_context.verify(user.username, db_user_name.username):
+    elif (
+        session.query(models.Users)
+        .filter(user.username == models.Users.username)
+        .first()
+    ):
         raise HTTPException(status_code=401, detail="ユーザー名はすでに存在します")
 
-    hash_username = pwd_context.hash(user.username)
     hash_password = pwd_context.hash(user.password)
-    user_obj = models.Users(username=hash_username, password=hash_password)
+
+    user_obj = models.Users(username=user.username, password=hash_password)
     session.add(user_obj)
     session.commit()
     session.refresh(user_obj)
+
     return user_obj
 
 
 def read_users(user: models.LoginUsers):
-    db_user_id = session.query(models.Users).first()
+    db_user_name = (
+        session.query(models.Users)
+        .filter(user.username == models.Users.username)
+        .first()
+    )
 
     if user.username == "" or user.password == "":
         raise HTTPException(
             status_code=401, detail="ユーザー名またはパスワードを入力してください"
         )
 
-    if not pwd_context.verify(
-        user.username, db_user_id.username
-    ) or not pwd_context.verify(user.password, db_user_id.password):
+    if not db_user_name or not pwd_context.verify(user.password, db_user_name.password):
         raise HTTPException(status_code=401, detail="失敗しました")
 
     hash_username = pwd_context.hash(user.username)

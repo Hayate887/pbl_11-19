@@ -4,13 +4,7 @@ from fastapi import Body, FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 import models
-from database import (
-    add_fruits,
-    add_users,
-    read_fruits,
-    read_users,
-    setup,
-)
+from database import add_fruits, add_users, read_fruits, read_users, setup
 
 app = FastAPI()
 
