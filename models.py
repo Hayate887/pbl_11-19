@@ -1,7 +1,8 @@
+import uuid
 from datetime import datetime
 
-from pydantic import BaseModel
-from sqlalchemy import Column, DateTime, Integer, String
+from pydantic import BaseModel, ConfigDict
+from sqlalchemy import UUID, Column, DateTime, Integer, String
 from sqlalchemy.orm import DeclarativeBase
 
 
@@ -15,6 +16,21 @@ class Fruits(Base):
     id = Column("id", Integer, primary_key=True)
     name = Column("name", String(10))
     price = Column("price", Integer)
+
+
+class SelectFruits(Base):
+    __tablename__ = "select_fruits"
+
+    id = Column("id", Integer, primary_key=True)
+    name = Column("name", String(10))
+    price = Column("price", Integer)
+    user_id = Column("user_id", UUID)
+
+    def __init__(self, id: int, name: str, price: int, user_id: uuid.UUID):
+        self.id = id
+        self.name = name
+        self.price = price
+        self.user_id = user_id
 
 
 class Setup(Base):
@@ -53,3 +69,11 @@ class UserCreate(BaseModel):
 class LoginUsers(BaseModel):
     username: str
     password: str
+
+
+class ItemSchema(BaseModel):
+    id: int
+    name: str
+    price: int
+
+    model_config = ConfigDict(from_attributes=True)
