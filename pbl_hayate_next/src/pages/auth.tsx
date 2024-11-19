@@ -3,7 +3,6 @@ import Head from "next/head";
 import { ItemTableButton } from "./Buttons/ItemTableButton";
 import { LogOutButton } from "./Buttons/LogOutButton";
 import { UserTableButton } from "./Buttons/UserTableButton";
-import { HelloUserMessage } from "./HelloUserMessage";
 export default function Home() {
   return (
     <>
@@ -13,7 +12,6 @@ export default function Home() {
       </Head>
       <Center h="100vh">
         <VStack>
-          <HelloUserMessage />
           <LogOutButton />
           <HStack>
             <UserTableButton />
